@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Muscle Memory</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+      max-width: 500px;
+    }
+    input {
+      width: 100px;
+      padding: 0.5em;
+    }
+    button {
+      margin-left: 1em;
+      padding: 0.5em 1em;
+    }
+    #result {
+      margin-top: 1em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Muscle Memory</h1>
+  <p>Number of exercises done this year:</p>
+  <input type="number" id="exDone" />
+  <button onclick="update()">Check</button>
+
+  <div id="result"></div>
+
+  <script>
+    // Load previously saved value from localStorage (if any)
+    document.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("exDone");
+      if (saved) document.getElementById("exDone").value = saved;
+    });
+
+    function dayOfYear() {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now - start;
+      // Convert ms → days
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+
+    function update() {
+      const exDone = Number(document.getElementById("exDone").value) || 0;
+      localStorage.setItem("exDone", exDone);
+
+      const currentDay = dayOfYear();
+      // Target is 70 by day 365. Let's see how many we should have by now.
+      const expectedSoFar = (70 / 365) * currentDay;
+
+      const onTarget = exDone >= expectedSoFar ? "Yes" : "No";
+
+      // Build output text
+      const resultText = `
+        <p>Day of year: <strong>${currentDay}</strong></p>
+        <p>Exercises done: <strong>${exDone}</strong></p>
+        <p>Expected so far (to hit 70 by year end): <strong>${expectedSoFar.toFixed(1)}</strong></p>
+        <p>Are we on target? <strong>${onTarget}</strong></p>
+      `;
+
+      document.getElementById("result").innerHTML = resultText;
+    }
+  </script>
+</body>
+</html>
