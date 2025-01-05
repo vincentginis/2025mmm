@@ -32,7 +32,6 @@
   <div id="result"></div>
 
   <script>
-    // Load previously saved value from localStorage (if any)
     document.addEventListener("DOMContentLoaded", () => {
       const saved = localStorage.getItem("exDone");
       if (saved) document.getElementById("exDone").value = saved;
@@ -41,9 +40,7 @@
     function dayOfYear() {
       const now = new Date();
       const start = new Date(now.getFullYear(), 0, 0);
-      const diff = now - start;
-      // Convert ms → days
-      return Math.floor(diff / (1000 * 60 * 60 * 24));
+      return Math.floor((now - start) / (1000 * 60 * 60 * 24));
     }
 
     function update() {
@@ -51,16 +48,15 @@
       localStorage.setItem("exDone", exDone);
 
       const currentDay = dayOfYear();
-      // Target is 70 by day 365. Let's see how many we should have by now.
-      const expectedSoFar = (70 / 365) * currentDay;
 
-      const onTarget = exDone >= expectedSoFar ? "Yes" : "No";
+      // Extrapolated exercises based on current pace
+      const extrapolatedExpected = currentDay > 0 ? (exDone / currentDay) * 365 : 0;
+      const onTarget = extrapolatedExpected >= 70 ? "Yes" : "No";
 
-      // Build output text
       const resultText = `
         <p>Day of year: <strong>${currentDay}</strong></p>
         <p>Exercises done: <strong>${exDone}</strong></p>
-        <p>Expected so far (to hit 70 by year end): <strong>${expectedSoFar.toFixed(1)}</strong></p>
+        <p>Extrapolated total for the year: <strong>${extrapolatedExpected.toFixed(1)}</strong></p>
         <p>Are we on target? <strong>${onTarget}</strong></p>
       `;
 
